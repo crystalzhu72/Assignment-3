@@ -1,0 +1,39 @@
+---
+title: "ML1000 Assignment 3"
+author: "Crystal Zhu"
+date: "07/03/2021"
+output: html_document
+---
+
+## Data Understanding
+
+
+### How do we merge the data files?
+
+
+There are six data files, excluding the sample_submission.csv file, from the Instacart Market Basket Analysis data - aisles.csv, departments.csv, order_products__train.csv, order_products__prior.csv, orders.csv and products.csv.
+
+(Add data file descriptions later!)
+
+Steps:
+
+1. Merged the aisles data with the products data to obtain Merged dataset 1, so that we know which aisle each product belongs to.
+
+2. Combined the Merged dataset 1 with the department data to obtain Merged dataset 2, so we know which aisle and department each product is from.
+
+3. Add Merged dataset 2, which contains product full information, to order_products__train and order_products__prior files, respectively, to obtain Merged dataset 3 (Train) and Merged dataset 4 (Prior), so that we know the product information (e.g. product names, aisles and departments they belong to) of the products in the training and prior orders.
+
+
+
+
+
+
+```{r}
+library(arules)
+X=read.transactions("C:/Users/yunan/Downloads/York U/Machine Learning Cert/Assignment 3/data/orders_TRAIN_products_MERGED.csv")
+
+X_apri_rule=apriori(X$,parameter=list(supp=0.05, conf=0.5))
+inspect(X_apri_rule[1:2])
+```
+
+

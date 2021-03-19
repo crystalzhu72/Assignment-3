@@ -305,11 +305,117 @@ server <- function(input, output,session) {
       
       output$text10 <-renderPrint(text10())
       
+
       
       
-    }
-  )
-  
+      
+      observeEvent(input$paynow, {
+        
+        #dataframe based on user inputs
+        products_select<-rbind(input$select1,input$select2,input$select3,input$select4,input$select5,input$select6)
+        products_select<-as.data.frame(products_select)
+        names(products_select)<-c("product_name")
+        products_select$product_id<-products_select %>% 
+          left_join(products,by="product_name") %>% 
+          select(product_id) 
+        
+        
+        users <- data.frame(user_id = c("13726"))
+        prod<-data.frame(product_id =mcname)
+        #ord<-data.frame(user_id = c("13726"),product_id=c("196","130","13176"))
+        
+        
+        
+        #dataframe with column numbers
+        ord$RowIdx <- match(ord$user_id, users$user_id)
+        ord$ColIdx <- match(ord$product_id, prod$product_id)
+        
+        
+        
+        
+        
+        #create sparse matrix for model input
+        # matSparse3 <- sparseMatrix(
+        #   i = ord$RowIdx,
+        #   j = ord$ColIdx,
+        #   x = 1L,
+        #   dims = c(nrow(users), nrow(prod)),
+        #   dimnames = list(users$user_id, prod$product_id)
+        # )
+        
+        
+        # new_user_predictions <- model$predict(matSparse3, k =3)
+        # top_list <- as(new_user_predictions, "list")
+        # 
+        # table_recom<-products %>%
+        #   filter(product_id %in% top_list) %>%
+        #   select(product_id,product_name)
+        # table_recom
+        
+        
+        output$tablepred<-renderDataTable({
+          datatable(
+            table_recom %>% 
+              select(product_name),
+            colnames=c("Product Name"))
+          
+        })
+        
+      })
+      
+      
+      
+      
+      
+      
+      
+      observeEvent(input$buynow, {
+        updateTabsetPanel(session = session, inputId = "tabs", selected = "SHOPPING BAG")
+        
+        
+        products_select<-rbind(input$select1,input$select2,input$select3,input$select4,input$select5,input$select6)
+        products_select<-as.data.frame(products_select)
+        names(products_select)<-c("product_name")
+        products_select$product_id<-products_select %>% 
+          left_join(products,by="product_name") %>% 
+          select(product_id)    
+        
+        
+        output$tableorder <- renderDataTable({
+          datatable(
+            products_select %>% 
+              select(product_name),
+            colnames=c("Serial","Product Name"))
+          
+        })
+        
+        output$tableconfirm <- renderDataTable({
+          datatable(
+            products_select %>% 
+              select(product_name),
+            colnames=c("Serial","Product Name"))
+          
+        })
+        
+        
+      })
+      
+      observeEvent(input$paynow, {
+        updateTabsetPanel(session = session, inputId = "tabs", selected = "ORDERS")
+      })
+      
+      
+      
+      
+      
+      thanks<-eventReactive(input$confirmnow,
+                            {print("Your order is being processed. Your support is invaluable !!")}
+      )
+      
+      output$thank<-renderText(thanks())
+      
+      
+      
   
  
   
